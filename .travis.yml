@@ -73,8 +73,6 @@ script:
   ~/settings.xml -Djava.awt.headless=true -Dgpg.defaultKeyring=false -Dgpg-keyname=1481F619
   -Dgpg.publicKeyring=src/travis/pubring.gpg -Dgpg.secretKeyring=src/travis/secretring.gpg
   clean deploy -P deployment,create-dmg;fi
-- if [ "$TRAVIS_OS_NAME" == "linux" -a "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_PULL_REQUEST"
-  == "false" ]; then mvn versioneye:update || true; fi
 - echo GIBSTUDYEND $(date)
 - cd $TRAVIS_BUILD_DIR
 - echo TESTNUM $(find . -name TEST-*.xml -newer /tmp/NOW | wc -l)
