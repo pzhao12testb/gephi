@@ -173,8 +173,8 @@
         
         <!-- Mac OS X bundle settings -->
         <gephi.appbundle.name>Gephi</gephi.appbundle.name>
-        <gephi.bundle.jre.url>http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135</gephi.bundle.jre.url>
-        <gephi.bundle.jre.version>jre-8u144-macosx-x64</gephi.bundle.jre.version>
+        <gephi.bundle.jre.url>http://download.oracle.com/otn-pub/java/jdk/8u152-b16/aa0333dd3019491ca4f6ddbe78cdb6d0</gephi.bundle.jre.url>
+        <gephi.bundle.jre.version>jre-8u152-macosx-x64</gephi.bundle.jre.version>
 
         <!-- Mac OS X signing identity - must match with a verified Apple developer certificate in the keychain -->
         <gephi.codesign.identity>Developer ID Application</gephi.codesign.identity>
@@ -246,7 +246,7 @@
         
         <gephi.site-maven-plugin.version>0.12</gephi.site-maven-plugin.version>
         
-        <versioneye-maven-plugin.version>3.11.4</versioneye-maven-plugin.version>
+        <gephi.versions-maven-plugin.version>2.5</gephi.versions-maven-plugin.version>
     <gib.commitRange>${env.TRAVIS_COMMIT_RANGE}</gib.commitRange>
         <gib.enabled>true</gib.enabled>
         <gib.useEkstazi>false</gib.useEkstazi>
@@ -814,6 +814,14 @@
             <plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${gephi.versions-maven-plugin.version}</version>
+                    <configuration>
+                        <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>nbm-maven-plugin</artifactId>
                     <version>${gephi.nbm-maven-plugin.version}</version>
                     <extensions>true</extensions>
@@ -923,18 +931,6 @@
                     <groupId>com.github.github</groupId>
                     <artifactId>site-maven-plugin</artifactId>
                     <version>${gephi.site-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.versioneye</groupId>
-                    <artifactId>versioneye-maven-plugin</artifactId>
-                    <version>${versioneye-maven-plugin.version}</version>
-                    <configuration>
-                        <visibility>public</visibility>
-                        <updatePropertiesAfterCreate>true</updatePropertiesAfterCreate>
-                        <mergeAfterCreate>true</mergeAfterCreate>
-                        <trackPlugins>true</trackPlugins>
-                        <propertiesPath>${basedir}/versioneye.properties</propertiesPath>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
