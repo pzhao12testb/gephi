@@ -43,7 +43,6 @@ package org.gephi.filters.plugin.edge;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import org.gephi.filters.api.FilterLibrary;
@@ -120,7 +119,7 @@ public class EdgeTypeBuilder implements FilterBuilder {
 
         @Override
         public boolean evaluate(Graph graph, Edge edge) {
-            return Objects.equals(type, edge.getType());
+            return type.equals(edge.getType());
         }
 
         @Override

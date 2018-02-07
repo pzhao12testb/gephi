@@ -85,7 +85,6 @@ public class ImporterGraphML implements FileImporter, LongTask {
     private static final String EDGE_SOURCE = "source";
     private static final String EDGE_TARGET = "target";
     private static final String EDGE_DIRECTED = "directed";
-    private static final String EDGE_TYPE = "label";
     private static final String ATTRIBUTE = "key";
     private static final String ATTRIBUTE_ID = "id";
     private static final String ATTRIBUTE_TITLE = "attr.name";
@@ -131,6 +130,9 @@ public class ImporterGraphML implements FileImporter, LongTask {
         properties.addEdgePropertyAssociation(EdgeProperties.G, "g");
         properties.addEdgePropertyAssociation(EdgeProperties.B, "b");
         properties.addEdgePropertyAssociation(EdgeProperties.COLOR, "color");
+
+        nodePropertiesAttributes.put("d3", NodeProperties.LABEL);// Default node label used by yEd from yworks.com.
+        edgePropertiesAttributes.put("d7", EdgeProperties.LABEL);// Default edge label used by yEd from yworks.com.
     }
 
     @Override
@@ -195,7 +197,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
         for (int i = 0; i < reader.getAttributeCount(); i++) {
             String attName = reader.getAttributeName(i).getLocalPart();
             if (GRAPH_DEFAULT_EDGETYPE.equalsIgnoreCase(attName)) {
-                defaultEdgeType = reader.getAttributeValue(i).trim();
+                defaultEdgeType = reader.getAttributeValue(i);
             } else if (GRAPH_ID.equalsIgnoreCase(attName)) {
                 id = reader.getAttributeValue(i);
             }
@@ -277,7 +279,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
         for (int i = 0; i < reader.getAttributeCount(); i++) {
             String attName = reader.getAttributeName(i).getLocalPart();
             if (ATTVALUE_FOR.equalsIgnoreCase(attName)) {
-                fore = reader.getAttributeValue(i).trim();
+                fore = reader.getAttributeValue(i);
             }
         }
 
@@ -372,7 +374,6 @@ public class ImporterGraphML implements FileImporter, LongTask {
         String source = "";
         String target = "";
         String directed = "";
-        String type = null;
 
         //Attributes
         for (int i = 0; i < reader.getAttributeCount(); i++) {
@@ -385,8 +386,6 @@ public class ImporterGraphML implements FileImporter, LongTask {
                 id = reader.getAttributeValue(i);
             } else if (EDGE_DIRECTED.equalsIgnoreCase(attName)) {
                 directed = reader.getAttributeValue(i);
-            } else if (EDGE_TYPE.equalsIgnoreCase(attName)) {
-                type = reader.getAttributeValue(i).trim();
             }
         }
 
@@ -402,10 +401,6 @@ public class ImporterGraphML implements FileImporter, LongTask {
         NodeDraft nodeTarget = container.getNode(target);
         edge.setSource(nodeSource);
         edge.setTarget(nodeTarget);
-        if (type != null && !type.isEmpty()) {
-            //Edge labels not retained on graphml export https://github.com/gephi/gephi/issues/1516
-            edge.setType(type);
-        }
 
         //Type
         if (!directed.isEmpty()) {
@@ -423,9 +418,9 @@ public class ImporterGraphML implements FileImporter, LongTask {
 
         boolean end = false;
         while (reader.hasNext() && !end) {
-            int elemType = reader.next();
+            int type = reader.next();
 
-            switch (elemType) {
+            switch (type) {
                 case XMLStreamReader.START_ELEMENT:
                     if (ATTVALUE.equalsIgnoreCase(xmlReader.getLocalName())) {
                         readEdgeAttValue(reader, edge);
@@ -449,7 +444,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
         for (int i = 0; i < reader.getAttributeCount(); i++) {
             String attName = reader.getAttributeName(i).getLocalPart();
             if (ATTVALUE_FOR.equalsIgnoreCase(attName)) {
-                fore = reader.getAttributeValue(i).trim();
+                fore = reader.getAttributeValue(i);
             }
         }
 
@@ -538,13 +533,13 @@ public class ImporterGraphML implements FileImporter, LongTask {
         for (int i = 0; i < reader.getAttributeCount(); i++) {
             String attName = reader.getAttributeName(i).getLocalPart();
             if (ATTRIBUTE_ID.equalsIgnoreCase(attName)) {
-                id = reader.getAttributeValue(i).trim();
+                id = reader.getAttributeValue(i);
             } else if (ATTRIBUTE_TYPE.equalsIgnoreCase(attName)) {
-                type = reader.getAttributeValue(i).trim();
+                type = reader.getAttributeValue(i);
             } else if (ATTRIBUTE_TITLE.equalsIgnoreCase(attName)) {
-                title = reader.getAttributeValue(i).trim();
+                title = reader.getAttributeValue(i);
             } else if (ATTRIBUTE_FOR.equalsIgnoreCase(attName)) {
-                forStr = reader.getAttributeValue(i).trim();
+                forStr = reader.getAttributeValue(i);
             }
         }
 
@@ -570,7 +565,7 @@ public class ImporterGraphML implements FileImporter, LongTask {
                     property = true;
                 }
             }
-
+            
             if (property) {
                 return;
             }

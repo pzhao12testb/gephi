@@ -94,7 +94,6 @@ public class CSVSheetParser implements SheetParser {
     private class CSVIterator implements Iterator<SheetRow> {
 
         private final Iterator<CSVRecord> iterator;
-        private ErrorRow errorFound = null;
 
         public CSVIterator() {
             iterator = parser.iterator();
@@ -102,60 +101,22 @@ public class CSVSheetParser implements SheetParser {
 
         @Override
         public boolean hasNext() {
-            if (errorFound != null) {
-                return false;
-            }
-
             try {
                 return iterator.hasNext();
             } catch (Exception e) {
-                //In case of malformed CSV or bad delimiter
-                errorFound = new ErrorRow(e.getMessage());
                 Logger.getLogger("").severe(e.getMessage());
-                return true;
+                return false;//In case of malformed CSV or bad delimiter
             }
         }
 
         @Override
         public SheetRow next() {
-            if (errorFound != null) {
-                return errorFound;
-            } else {
-                return new CSVSheetRow(iterator.next());
-            }
+            return new CSVSheetRow(iterator.next());
         }
 
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    private class ErrorRow implements SheetRow {
-
-        private final String errorMessage;
-
-        public ErrorRow(String errorMessage) {
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public boolean isConsistent() {
-            return false;
-        }
-
-        @Override
-        public int size() {
-            return 1;
-        }
-
-        @Override
-        public String get(int index) {
-            if (index == 0) {
-                return errorMessage;
-            } else {
-                return null;
-            }
         }
     }
 }

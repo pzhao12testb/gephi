@@ -228,32 +228,27 @@ public class DefaultProcessor extends AbstractProcessor {
 
             Edge edge = graph.getEdge(source, target, edgeType);
 
-            if (edge != null && edgesMergeStrategy == EdgeMergeStrategy.NO_MERGE) {
-                //Undirected and directed edges are incompatible, check for them or we could get an exception:
-                final Edge incompatibleEdge = findIncompatibleEdge(graph, source, target, createDirected, edgeType);
-                if (incompatibleEdge == null) {
-                    //Force create, no merge
-                    edge = null;
-                } else {
-                    String message = NbBundle.getMessage(
-                            DefaultProcessor.class, "DefaultProcessor.error.incompatibleEdges",
-                            String.format(
-                                    "[%s -> %s; %s, type %s]",
-                                    sourceId, targetId, createDirected ? "Directed" : "Undirected", type
-                            ),
-                            String.format(
-                                    "[%s -> %s; %s; type: %s; id: %s]",
-                                    incompatibleEdge.getSource().getId(), incompatibleEdge.getTarget().getId(),
-                                    incompatibleEdge.isDirected() ? "Directed" : "Undirected",
-                                    incompatibleEdge.getTypeLabel(),
-                                    incompatibleEdge.getId()
-                            )
-                    );
-                    report.logIssue(new Issue(message, Issue.Level.WARNING));
+            //Undirected and directed edges are incompatible, check for them or we could get an exception:
+            boolean canCreateEdge = true;
+            if (edge == null) {
+                if (createDirected) {
+                    //The edge may exist with opposite source-target but undirected. In that case we can't create a directed one:
+                    edge = graph.getEdge(target, source, edgeType);
 
-                    Progress.progress(progressTicket);
-                    continue;
+                    if (edge != null && edge.isDirected()) {
+                        edge = null;//Actually it's directed so we can create the opposite directed edge
+                    }
+                } else {
+                    edge = graph.getEdge(target, source, edgeType);
                 }
+
+                if (edge != null) {
+                    canCreateEdge = false;
+                }
+            }
+
+            if (canCreateEdge && edgesMergeStrategy == EdgeMergeStrategy.NO_MERGE) {
+                edge = null;//Force create, no merge
             }
 
             boolean newEdge = edge == null;
@@ -289,29 +284,6 @@ public class DefaultProcessor extends AbstractProcessor {
         }
 
         Progress.finish(progressTicket);
-    }
-
-    private Edge findIncompatibleEdge(Graph graph, Node source, Node target, boolean directed, int edgeType) {
-        Edge edge = graph.getEdge(source, target, edgeType);
-
-        if (edge == null) {
-            if (directed) {
-                //The edge may exist with opposite source-target but undirected. In that case we can't create a directed one:
-                edge = graph.getEdge(target, source, edgeType);
-
-                if (edge != null && edge.isDirected()) {
-                    //Actually it's directed so we can create the opposite directed edge, not incompatible
-                    edge = null;
-                }
-            }
-        } else {
-            if (edge.isDirected() == directed) {
-                //Same directedness, not incompatible
-                edge = null;
-            }
-        }
-
-        return edge;
     }
 
     private Object toElementId(ElementIdType elementIdType, String idString) {

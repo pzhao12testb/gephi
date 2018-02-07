@@ -210,38 +210,19 @@ public final class ImportUtils {
         }
     }
 
-    public static boolean isArchiveFile(FileObject fileObject) {
+    public static FileObject getArchivedFile(FileObject fileObject) {
         if (fileObject == null) {
-            return false;
+            return null;
         }
 
         if (fileObject.getExt().toLowerCase().startsWith("xls")) {//Seems to break it otherwise!
-            return false;
-        }
-
-        boolean isGz = fileObject.getExt().equalsIgnoreCase("gz");
-        boolean isBzip = fileObject.getExt().equalsIgnoreCase("bz2");
-
-        if (isGz || isBzip) {
-            return true;
-        }
-
-        return FileUtil.isArchiveFile(fileObject);
-    }
-
-    public static FileObject getArchivedFile(final FileObject fileObject) {
-        if (!isArchiveFile(fileObject)) {
             return fileObject;
         }
-
-        FileObject result = fileObject;
 
         // ZIP and JAR archives
         if (FileUtil.isArchiveFile(fileObject)) {
             FileObject[] children = FileUtil.getArchiveRoot(fileObject).getChildren();
-            if (children.length > 0) {
-                result = children[0];
-            }
+            fileObject = children.length > 0 ? children[0] : null;
         } else { // GZ or BZIP2 archives
             boolean isGz = fileObject.getExt().equalsIgnoreCase("gz");
             boolean isBzip = fileObject.getExt().equalsIgnoreCase("bz2");
@@ -279,18 +260,14 @@ public final class ImportUtils {
                     }
                     tempFile.deleteOnExit();
                     tempFile = FileUtil.normalizeFile(tempFile);
-                    result = FileUtil.toFileObject(tempFile);
+                    fileObject = FileUtil.toFileObject(tempFile);
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             }
         }
-
-        if (result == null) {
-            result = fileObject;//Never return null if the archive is empty, broken or anything
-        }
-
-        return result;
+        
+        return fileObject;
     }
 
     public static File getBzipFile(FileObject in, File out, boolean isTar) throws IOException {

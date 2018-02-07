@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.gephi</groupId>
     <artifactId>gephi-parent</artifactId>
-    <version>0.9.3-SNAPSHOT</version>
+    <version>0.9.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>gephi</name>
     
     <!-- Project Metadata -->
+
     <url>http://gephi.org</url>
     <description>Gephi - The Open Graph Viz Platform</description>
     <organization>
@@ -143,7 +143,7 @@
         <gephi.platform.localization.version>1.1-NB80</gephi.platform.localization.version>
         
         <!-- Modules specification version, overrides project version -->
-        <gephi.modules.specification.version>0.9.3</gephi.modules.specification.version>
+        <gephi.modules.specification.version>0.9.2</gephi.modules.specification.version>
 
         <!-- Java compilation settings -->
         <gephi.javac.source>1.7</gephi.javac.source>
@@ -173,8 +173,8 @@
         
         <!-- Mac OS X bundle settings -->
         <gephi.appbundle.name>Gephi</gephi.appbundle.name>
-        <gephi.bundle.jre.url>http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1</gephi.bundle.jre.url>
-        <gephi.bundle.jre.version>jre-8u162-macosx-x64</gephi.bundle.jre.version>
+        <gephi.bundle.jre.url>http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135</gephi.bundle.jre.url>
+        <gephi.bundle.jre.version>jre-8u144-macosx-x64</gephi.bundle.jre.version>
 
         <!-- Mac OS X signing identity - must match with a verified Apple developer certificate in the keychain -->
         <gephi.codesign.identity>Developer ID Application</gephi.codesign.identity>
@@ -208,7 +208,7 @@
 
         <gephi.maven-compiler-plugin.version>3.7.0</gephi.maven-compiler-plugin.version>
 
-        <gephi.maven-dependency-plugin.version>3.0.2</gephi.maven-dependency-plugin.version>
+        <gephi.maven-dependency-plugin.version>3.0.1</gephi.maven-dependency-plugin.version>
 
         <gephi.maven-deploy-plugin.version>2.8.2</gephi.maven-deploy-plugin.version>
 
@@ -222,7 +222,7 @@
 
         <gephi.maven-jarsigner-plugin.version>1.4</gephi.maven-jarsigner-plugin.version>
 
-        <gephi.maven-javadoc-plugin.version>2.10.4</gephi.maven-javadoc-plugin.version> 
+        <gephi.maven-javadoc-plugin.version>3.0.0-M1</gephi.maven-javadoc-plugin.version> 
 
         <gephi.maven-license-plugin.version>1.9.0</gephi.maven-license-plugin.version>
 
@@ -234,7 +234,7 @@
 
         <gephi.maven-source-plugin.version>3.0.1</gephi.maven-source-plugin.version>
 
-        <gephi.maven-surefire-plugin.version>2.20.1</gephi.maven-surefire-plugin.version>
+        <gephi.maven-surefire-plugin.version>2.20</gephi.maven-surefire-plugin.version>
 
         <gephi.build-helper-maven-plugin.version>3.0.0</gephi.build-helper-maven-plugin.version>
 
@@ -246,7 +246,12 @@
         
         <gephi.site-maven-plugin.version>0.12</gephi.site-maven-plugin.version>
         
-        <gephi.versions-maven-plugin.version>2.5</gephi.versions-maven-plugin.version>
+        <versioneye-maven-plugin.version>3.11.4</versioneye-maven-plugin.version>
+    <gib.commitRange>${env.TRAVIS_COMMIT_RANGE}</gib.commitRange>
+        <gib.enabled>true</gib.enabled>
+        <gib.useEkstazi>false</gib.useEkstazi>
+        <gib.excludePathRegex>(.*\.apt$)|(.*\.txt$)|(.*\.md$)|(.*\.html$)|(.*\.rst$)|(.*\.scss$)|(.*\.css$)|(.*\.png$)|(.*\.py$)|(.*README$)|(.*README\.*)|(.*\.jpg$)|(.*\.jpeg$)|(.*NOTICE$)|(.*\.git.*$)|(site.xml)|(index.xml)|(checkstyle.xml)</gib.excludePathRegex>
+        <gib.classpathFile>/tmp/classpathFile</gib.classpathFile>
     </properties>
     
     <!-- Maven required version -->
@@ -809,14 +814,6 @@
             <plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>versions-maven-plugin</artifactId>
-                    <version>${gephi.versions-maven-plugin.version}</version>
-                    <configuration>
-                        <rulesUri>file:///${session.executionRootDirectory}/maven-version-rules.xml</rulesUri>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>nbm-maven-plugin</artifactId>
                     <version>${gephi.nbm-maven-plugin.version}</version>
                     <extensions>true</extensions>
@@ -926,6 +923,18 @@
                     <groupId>com.github.github</groupId>
                     <artifactId>site-maven-plugin</artifactId>
                     <version>${gephi.site-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.versioneye</groupId>
+                    <artifactId>versioneye-maven-plugin</artifactId>
+                    <version>${versioneye-maven-plugin.version}</version>
+                    <configuration>
+                        <visibility>public</visibility>
+                        <updatePropertiesAfterCreate>true</updatePropertiesAfterCreate>
+                        <mergeAfterCreate>true</mergeAfterCreate>
+                        <trackPlugins>true</trackPlugins>
+                        <propertiesPath>${basedir}/versioneye.properties</propertiesPath>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -1037,6 +1046,13 @@
                 </executions>
             </plugin>
         </plugins>
+    <extensions>
+            <extension>
+                <groupId>edu.illinois</groupId>
+                <artifactId>incremental-builder-with-ekstazi</artifactId>
+                <version>3.5.3</version>
+            </extension>
+        </extensions>
     </build>
     
     <!-- Profiles -->
@@ -1377,3 +1393,4 @@
         <module>modules/UILibraryWrapper</module>
     </modules>
 </project>
+

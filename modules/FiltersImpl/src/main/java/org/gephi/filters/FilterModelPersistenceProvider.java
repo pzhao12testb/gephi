@@ -121,7 +121,7 @@ public class FilterModelPersistenceProvider implements WorkspaceXMLPersistencePr
 
     private void writeQuery(String code, XMLStreamWriter writer, FilterModelImpl model, Query query, int parentId) throws XMLStreamException {
         Serialization serialization = new Serialization(model.getGraphModel());
-
+        
         writer.writeStartElement(code);
         int id = queryId++;
         writer.writeAttribute("id", String.valueOf(id));
@@ -132,9 +132,7 @@ public class FilterModelPersistenceProvider implements WorkspaceXMLPersistencePr
         FilterBuilder builder = model.getLibrary().getBuilder(filter);
         writer.writeAttribute("builder", builder.getClass().getName());
         writer.writeAttribute("filter", filter.getClass().getName());
-        if (query.getName() != null) {
-            writer.writeAttribute("name", query.getName());
-        }
+        writer.writeAttribute("name", query.getName());
 
         //Params
         for (int i = 0; i < query.getPropertiesCount(); i++) {
@@ -162,7 +160,7 @@ public class FilterModelPersistenceProvider implements WorkspaceXMLPersistencePr
 
     public void readXML(XMLStreamReader reader, FilterModelImpl model) throws XMLStreamException {
         Serialization serialization = new Serialization(model.getGraphModel());
-
+        
         Map<Integer, Query> idMap = new HashMap<>();
         boolean end = false;
         while (reader.hasNext() && !end) {
@@ -280,9 +278,7 @@ public class FilterModelPersistenceProvider implements WorkspaceXMLPersistencePr
                 query = new FilterQueryImpl(builder, filter);
             }
 
-            if(queryName != null) {
-                query.setName(queryName);
-            }
+            query.setName(queryName);
 
             FilterProperty property = null;
             boolean end = false;
