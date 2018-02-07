@@ -15,7 +15,8 @@ before_install:
   $TRAVIS_BUILD_DIR/pom.xml;        else sed -i 's/<gib.enabled>true/<gib.enabled>false/'
   $TRAVIS_BUILD_DIR/pom.xml;        fi
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export JAVA_HOME=$(/usr/libexec/java_home);fi
-- if [ "$TRAVIS_OS_NAME" == "linux" ]; then git clone --branch 1.5 https://github.com/dscharrer/innoextract.git;fi
+- if [ "$TRAVIS_OS_NAME" == "linux" ]; then git clone --branch 1.6 --single-branch
+  https://github.com/dscharrer/innoextract.git;fi
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then cd innoextract && mkdir -p build && cd
   build && cmake .. && make && export PATH=$PATH:$PWD && cd ../..;fi
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then openssl aes-256-cbc -k "$ENCRYPTION_SECRET"
